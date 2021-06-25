@@ -148,21 +148,6 @@ const getAllProperties = (options, limit = 10) => {
   console.log(queryString, queryParams);
 
   return pool.query(queryString, queryParams).then((res) => res.rows);
-
-  // return pool
-  //   .query(`
-  //     SELECT properties.*, AVG(property_reviews.rating) AS average_rating
-  //     FROM properties
-  //     JOIN property_reviews ON property_id=properties.id
-  //     GROUP BY properties.id
-  //     LIMIT $1
-  //     `, [limit])
-  //   .then((result) => {
-  //     return result.rows;
-  //   })
-  //   .catch((err) => {
-  //     console.log(err.message);
-  //   });
 };
 exports.getAllProperties = getAllProperties;
 
