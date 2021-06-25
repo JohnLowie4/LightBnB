@@ -14,7 +14,7 @@ const pool = new Pool({
  * @param {String} email The email of the user.
  * @return {Promise<{}>} A promise to the user.
  */
-const getUserWithEmail = function(email) {
+const getUserWithEmail = (email) => {
   return pool
     .query(`
       SELECT * FROM users WHERE email = $1
@@ -78,9 +78,23 @@ exports.addUser = addUser;
  * @param {string} guest_id The id of the user.
  * @return {Promise<[{}]>} A promise to the reservations.
  */
-const getAllReservations = function(guest_id, limit = 10) {
-  return getAllProperties(null, 2);
-}
+const getAllReservations = (guest_id, limit = 10) => {
+  return pool
+    .query(`
+      SELECT reservations.*, properties.*, property_reviews.rating AS rating
+      FROM properties
+      JOIN reservations ON property_id=properties.id
+      JOIN property_reviews ON reservation_id=reservations.id
+      WHERE reservations.guest_id = $1
+      LIMIT $2
+    `, [guest_id, limit])
+    .then((result) => {
+      return result.rows;
+    })
+    .catch((err) => {
+      console.log(err.message);
+    });
+};
 exports.getAllReservations = getAllReservations;
 
 /// Properties
